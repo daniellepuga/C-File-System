@@ -47,7 +47,7 @@ void test_set_free(void)
 	int num = 420;
 
     // computations from project spec
-	int byte_num = num / BYTE;
+    int byte_num = num / BYTE;
 	int bit_num = num % BYTE;
 
 	unsigned char test_array[BLOCK_SIZE] = {0};
@@ -64,7 +64,6 @@ void test_set_free(void)
 	character = test_array[byte_num];
 	bit = (character >> bit_num) & 0;	
 
-	// Verify the bit matches what it was set to
 	CTEST_ASSERT(bit == 0, "testing if free");
 }
 
