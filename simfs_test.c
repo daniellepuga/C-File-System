@@ -164,11 +164,4 @@ int main(void)
     CTEST_EXIT();
 }
 
-#else
-
-int main(void)
-{
-    printf("Running normally!\n");
-}
-
 #endif
