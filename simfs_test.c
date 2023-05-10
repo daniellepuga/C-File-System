@@ -51,9 +51,7 @@ void test_set_free(void)
 	int bit_num = num % BYTE;
 
 	unsigned char test_array[BLOCK_SIZE] = {0};
-
 	set_free(test_array, num, 1); 
-
 	unsigned char character = test_array[byte_num];
 	int bit = (character >> bit_num) & 1;
 
@@ -117,7 +115,7 @@ void test_ialloc(void)
 
     // allocate
 	int ialloc_num = ialloc();
-	CTEST_ASSERT(ialloc_num == -1, "Test no free inodes in inode map");
+	CTEST_ASSERT(ialloc_num == -1, "testing when no free nodes in inode mp");
 
     // test block to all ones
 	block_for_testing(test_block, 255);
@@ -126,7 +124,7 @@ void test_ialloc(void)
     // write to the map
 	bwrite(1, test_block);
 	ialloc_num = ialloc();
-	CTEST_ASSERT(ialloc_num == num, "Test ialloc finds the free inode");
+	CTEST_ASSERT(ialloc_num == num, "testing if icollat finds the free inode");
 
 	image_close();
 }
@@ -150,7 +148,6 @@ void test_mkfs(void) {
 int main(void)
 {
     CTEST_VERBOSE(1);
-
 	test_image_open_and_close();
 	test_bread_and_bwrite();
 	test_set_free();
