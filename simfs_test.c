@@ -6,6 +6,11 @@
 #include "inode.h"
 #include "mkfs.h"
 
+// macros
+#define FREE_BLOCK_MAP_NUM 2
+#define BLOCK_SIZE 4096
+#define ONLY_ONE 255
+
 void block_for_testing(unsigned char *block, int value) {
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		block[i] = value;
@@ -70,7 +75,7 @@ void test_find_free(void)
     // arbitrary value for test
 	int num = 69; 
 	unsigned char test_block[BLOCK_SIZE];
-	block_for_testing(test_block, 255);
+	block_for_testing(test_block, ONLY_ONE);
 	
 	// make bit free and check for the bit
 	set_free(test_block, num, 0);
@@ -84,16 +89,16 @@ void test_alloc(void)
 	image_open("test_image", 0);
 
 	unsigned char test_block[BLOCK_SIZE];
-	block_for_testing(test_block, 255);
-	bwrite(2, test_block);
+	block_for_testing(test_block, ONLY_ONE);
+	bwrite(FREE_BLOCK_MAP_NUM, test_block);
 	
     // allocate
 	int alloc_num = alloc();
 	CTEST_ASSERT(alloc_num == -1, "testing with no free blocks");
 
-	block_for_testing(test_block, 255);
+	block_for_testing(test_block, ONLY_ONE);
 	set_free(test_block, num, 0);
-	bwrite(2, test_block);
+	bwrite(FREE_BLOCK_MAP_NUM, test_block);
 
     // allocate
 	alloc_num = alloc();
@@ -110,7 +115,7 @@ void test_ialloc(void)
 	unsigned char test_block[BLOCK_SIZE];
 
     // test block set to all ones
-	block_for_testing(test_block, 255);
+	block_for_testing(test_block, ONLY_ONE);
 	bwrite(1, test_block);
 
     // allocate
@@ -118,7 +123,7 @@ void test_ialloc(void)
 	CTEST_ASSERT(ialloc_num == -1, "testing when no free nodes in inode mp");
 
     // test block to all ones
-	block_for_testing(test_block, 255);
+	block_for_testing(test_block, ONLY_ONE);
 	set_free(test_block, num, 0);
 
     // write to the map
@@ -135,9 +140,9 @@ void test_mkfs(void) {
     unsigned char compare_block[BLOCK_SIZE] = {127};
 
     image_open("test_image", 1);
-    bwrite(2, test_block);
+    bwrite(FREE_BLOCK_MAP_NUM, test_block);
     mkfs();
-    bread(2, test_block);
+    bread(FREE_BLOCK_MAP_NUM, test_block);
     int free_check = find_free(test_block);
 
     CTEST_ASSERT((free_check == 7), "testing alloc for mkfs");
